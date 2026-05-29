@@ -465,6 +465,15 @@ def add_page_numbers(doc) -> None:
     run.font.size = Pt(10)
 
 
+def set_update_fields_on_open(doc: Document) -> None:
+    settings = doc.settings.element
+    update_fields = settings.find(qn("w:updateFields"))
+    if update_fields is None:
+        update_fields = OxmlElement("w:updateFields")
+        settings.append(update_fields)
+    update_fields.set(qn("w:val"), "true")
+
+
 def word_postprocess_rtl(docx_path: Path) -> None:
     try:
         import win32com.client

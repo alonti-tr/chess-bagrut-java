@@ -10,7 +10,7 @@ from docx_helpers import (
     ACCENT, ACCENT_DARK, DARK, MUTED,
     add_page_numbers, add_table, callout, code_block, he_bullet,
     he_paragraph, he_segments, heading, new_document, page_break,
-    tip_box, word_postprocess_rtl, _set_bidi,
+    set_update_fields_on_open, tip_box, word_postprocess_rtl, _set_bidi,
 )
 
 
@@ -89,6 +89,7 @@ def build_document() -> None:
     heading(doc, "נספח ג' — שאלות תיאורטיות אפשריות לבחינה", level=1)
     write_qa_appendix(doc)
 
+    set_update_fields_on_open(doc)
     doc.save(str(OUT_DOCX))
     word_postprocess_rtl(OUT_DOCX)
     print(f"wrote portfolio docx ({OUT_DOCX.stat().st_size:,} bytes)")
@@ -110,13 +111,13 @@ def write_cover(doc):
                  align=WD_ALIGN_PARAGRAPH.CENTER, space_after=40)
 
     fields = [
-        ("שם בית הספר", "_____________________"),
+        ("שם בית הספר", "הכפר הירוק"),
         ("סמל מוסד", "_____________________"),
-        ("שם התלמיד", "_____________________"),
-        ('מספר ת"ז', "_____________________"),
-        ("שם המורה המנחה", "_____________________"),
-        ("שם נושא הפרויקט", "משחק שחמט מאובטח בין שני משתתפים (Java)"),
-        ("תאריך הגשה", "_____________________"),
+        ("שם התלמיד", "לירן תדהר"),
+        ('מספר ת"ז', "218046456"),
+        ("שם המורה המנחה", "יהודה אור"),
+        ("שם נושא הפרויקט", "משחק שחמט מאובטח בין שני משתתפים"),
+        ("תאריך הגשה", "7.6.2026"),
     ]
     add_table(doc, ["שדה", "ערך"], fields, col_widths=[5.5, 11.0])
 
@@ -135,7 +136,7 @@ def write_toc(doc):
     fldChar1.set(qn("w:fldCharType"), "begin")
     instrText = OxmlElement("w:instrText")
     instrText.set(qn("xml:space"), "preserve")
-    instrText.text = 'TOC \\o "1-3" \\h \\z \\u'
+    instrText.text = 'TOC \\o "1-3" \\h \\z \\u \\p " "'
     fldChar2 = OxmlElement("w:fldChar")
     fldChar2.set(qn("w:fldCharType"), "separate")
     fldChar3 = OxmlElement("w:fldChar")
@@ -163,15 +164,6 @@ def write_intro(doc):
                  "טובה להדגמת מגוון נושאים בפרויקט אחד — תכנות מונחה עצמים (מחלקות "
                  "וירושה), תקשורת מבוססת סוקטים, ריבוי תהליכונים, פרוטוקול הודעות "
                  "פשוט, שמירת נתונים בקובץ, גיבוב סיסמאות, וממשק משתמש גרפי ב-Swing.")
-
-    callout(doc, [
-        ("הערה לגבי הצפנה: ", "bold"),
-        ("לפי הדרישות, נדרשת ", "he"),
-        ("הצפנת סיסמאות בלבד", "accent"),
-        (" (ללא הצפנת המידע העובר בתקשורת). ", "he"),
-        ("הפרויקט מקיים זאת: הסיסמאות נשמרות מגובבות עם SHA-256 + salt בקובץ, "
-         "ואילו ערוץ ה-TCP מעביר הודעות JSON רגילות.", "he"),
-    ])
 
     heading(doc, "1.2 ייזום: זיהוי הצורך", level=2)
     he_paragraph(doc,
