@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Chess: Run Server",
+            "request": "launch",
+            "mainClass": "chess.Main",
+            "args": "server"
+        },
+        {
+            "type": "java",
+            "name": "Chess: Run Client",
+            "request": "launch",
+            "mainClass": "chess.Main",
+            "args": "client"
+        }
+    ]
+}
