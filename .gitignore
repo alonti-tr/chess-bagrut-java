@@ -1,8 +1,1 @@
 bin/
-target/
-*.class
-*.docx
-__pycache__/
-*.pyc
-users.json
-.vscode/settings.json
