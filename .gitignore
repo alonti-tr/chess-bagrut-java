@@ -1,1 +1,7 @@
 bin/
+target/
+*.docx
+*.pyc
+users.json
+presentation/
+remove_docx.py
