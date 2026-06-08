@@ -1,6 +1,5 @@
 bin/
 target/
-*.docx
 *.pyc
 users.json
 presentation/
