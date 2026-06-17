@@ -1,6 +1,8 @@
 package chess.client;
 
 import chess.JSONUtil;
+import chess.config.AppConfig;
+import chess.config.SslHelper;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
@@ -9,9 +11,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class NetworkClient {
 
-    private static final String HOST = "127.0.0.1";
-    private static final int PORT = 5555;
+    private static final String CONFIG_PATH = "config/client.properties";
 
+    private final AppConfig config = AppConfig.load(CONFIG_PATH);
     private Socket socket;
     private PrintWriter out;
     private final BlockingQueue<Map<String, Object>> inbox = new LinkedBlockingQueue<>();
@@ -19,7 +21,11 @@ public class NetworkClient {
     public boolean connect() {
         if (socket != null && socket.isConnected() && !socket.isClosed()) return true;
         try {
-            socket = new Socket(HOST, PORT);
+            String host = config.getServerHost();
+            int port = config.getServerPort();
+            socket = config.isTlsEnabled()
+                    ? SslHelper.createClientSocket(host, port, config)
+                    : new Socket(host, port);
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             Thread reader = new Thread(() -> {
@@ -33,7 +39,7 @@ public class NetworkClient {
             reader.setDaemon(true);
             reader.start();
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return false;
         }
     }

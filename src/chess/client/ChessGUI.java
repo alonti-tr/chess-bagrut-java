@@ -124,8 +124,10 @@ public class ChessGUI extends JFrame {
 
         JButton btnHuman = new JButton("Play vs Human");
         JButton btnAI2 = new JButton("Play vs AI");
+        JButton btnGemini = new JButton("Play vs Gemini");
         styleButton(btnHuman, new java.awt.Color(80, 80, 160));
         styleButton(btnAI2, new java.awt.Color(140, 60, 60));
+        styleButton(btnGemini, new java.awt.Color(100, 60, 140));
 
         JButton btnExit = new JButton("Exit");
         styleButton(btnExit, new java.awt.Color(120, 40, 40));
@@ -137,6 +139,12 @@ public class ChessGUI extends JFrame {
             lobbyStatusLabel.setText("Searching for opponent...");
         });
         btnAI2.addActionListener(e -> playAI(2));
+        btnGemini.addActionListener(e -> {
+            Map<String, Object> msg = new LinkedHashMap<>();
+            msg.put("type", "play_gemini");
+            net.send(msg);
+            lobbyStatusLabel.setText("Starting game vs Gemini...");
+        });
         btnExit.addActionListener(e -> {
             net.disconnect();
             System.exit(0);
@@ -146,16 +154,18 @@ public class ChessGUI extends JFrame {
         panel.add(btnHuman, gbc);
         gbc.gridy = 2;
         panel.add(btnAI2, gbc);
+        gbc.gridy = 3;
+        panel.add(btnGemini, gbc);
 
         lobbyStatusLabel = new JLabel(" ", SwingConstants.CENTER);
         lobbyStatusLabel.setForeground(java.awt.Color.CYAN);
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         panel.add(lobbyStatusLabel, gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         panel.add(btnExit, gbc);
 
-        panel.setPreferredSize(new Dimension(340, 260));
+        panel.setPreferredSize(new Dimension(340, 310));
         return panel;
     }
 
@@ -200,6 +210,7 @@ public class ChessGUI extends JFrame {
         JButton btnLobby = new JButton("Back to Lobby");
         styleButton(btnLobby, new java.awt.Color(80, 80, 80));
         btnLobby.addActionListener(e -> {
+            lobbyStatusLabel.setText(" ");
             cards.show(root, "lobby");
             pack();
         });
@@ -330,7 +341,10 @@ public class ChessGUI extends JFrame {
         if (type == null) return;
         switch (type) {
             case "auth_result": handleAuthResult(msg); break;
-            case "info": lobbyStatusLabel.setText((String) msg.get("message")); break;
+            case "info":
+                String infoMsg = (String) msg.get("message");
+                gameStatusLabel.setText(infoMsg);
+                break;
             case "error": showError((String) msg.get("message")); break;
             case "game_start": handleGameStart(msg); break;
             case "state": handleState(msg); break;

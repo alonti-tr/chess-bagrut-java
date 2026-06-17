@@ -1,0 +1,5 @@
+chess.tls.enabled=false
+chess.tls.truststore=config/client-truststore.jks
+chess.tls.truststore.password=changeit
+chess.server.host=127.0.0.1
+chess.server.port=5555

@@ -1,24 +1,30 @@
 package chess.server;
 
 import chess.UserAuth;
+import chess.config.AppConfig;
+import chess.config.SslHelper;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ChessServer {
 
-    private static final int PORT = 5555;
+    private static final String CONFIG_PATH = "config/server.properties";
+    private final AppConfig config = AppConfig.load(CONFIG_PATH);
     private final UserAuth auth = new UserAuth();
     private final Matchmaker matchmaker = new Matchmaker();
 
-    public void start() throws IOException {
-        System.out.println("Chess server started on port " + PORT);
-        try (ServerSocket server = new ServerSocket(PORT)) {
+    public void start() throws Exception {
+        int port = config.getServerPort();
+        boolean tls = config.isTlsEnabled();
+        System.out.println("Chess server started on port " + port + (tls ? " (TLS)" : ""));
+        ServerSocket server = tls ? SslHelper.createServerSocket(port, config) : new ServerSocket(port);
+        try (server) {
             while (true) {
                 Socket socket = server.accept();
                 System.out.println("New connection from " + socket.getInetAddress());
                 try {
-                    ClientHandler handler = new ClientHandler(socket, auth, matchmaker);
+                    ClientHandler handler = new ClientHandler(socket, auth, matchmaker, config);
                     new Thread(handler).start();
                 } catch (IOException e) {
                     System.err.println("Failed to create handler: " + e.getMessage());

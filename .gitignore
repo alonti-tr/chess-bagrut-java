@@ -2,5 +2,10 @@ bin/
 target/
 *.pyc
 users.json
+config/*.properties
+!config/*.properties.example
+config/*.jks
+config/*.cer
+config/gemini.key
 presentation/
 remove_docx.py

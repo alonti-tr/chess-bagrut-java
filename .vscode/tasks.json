@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Chess: Server",
+            "type": "shell",
+            "command": "run.bat",
+            "args": ["server"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Chess: Client",
+            "type": "shell",
+            "command": "run.bat",
+            "args": ["client"],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

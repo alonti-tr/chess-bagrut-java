@@ -6,6 +6,8 @@
             "name": "Chess: Run Server",
             "request": "launch",
             "mainClass": "chess.Main",
+            "projectName": "chess-bagrut",
+            "cwd": "${workspaceFolder}",
             "args": "server"
         },
         {
@@ -13,7 +15,16 @@
             "name": "Chess: Run Client",
             "request": "launch",
             "mainClass": "chess.Main",
+            "projectName": "chess-bagrut",
+            "cwd": "${workspaceFolder}",
             "args": "client"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Chess: Server + Client",
+            "configurations": ["Chess: Run Server", "Chess: Run Client"],
+            "stopAll": true
         }
     ]
 }

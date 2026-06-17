@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ChessAI {
+public class ChessAI implements MoveProvider {
 
     private final int level;
     private final Random rng = new Random();
@@ -15,6 +15,12 @@ public class ChessAI {
         this.level = level;
     }
 
+    @Override
+    public String displayName() {
+        return "AI";
+    }
+
+    @Override
     public int[] pickMove(Board board) {
         List<int[]> all = allMoves(board);
         if (all.isEmpty()) return null;

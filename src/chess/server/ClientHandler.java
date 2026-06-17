@@ -2,7 +2,11 @@ package chess.server;
 
 import chess.ChessAI;
 import chess.JSONUtil;
+import chess.MoveProvider;
 import chess.UserAuth;
+import chess.ai.GeminiMoveProvider;
+import chess.config.AppConfig;
+import chess.config.GeminiApiKey;
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedHashMap;
@@ -13,6 +17,7 @@ public class ClientHandler implements Runnable {
     private final Socket socket;
     private final UserAuth auth;
     private final Matchmaker matchmaker;
+    private final AppConfig config;
     private final PrintWriter out;
     private final BufferedReader in;
 
@@ -20,10 +25,11 @@ public class ClientHandler implements Runnable {
     private Game game = null;
     private boolean inQueue = false;
 
-    public ClientHandler(Socket socket, UserAuth auth, Matchmaker matchmaker) throws IOException {
+    public ClientHandler(Socket socket, UserAuth auth, Matchmaker matchmaker, AppConfig config) throws IOException {
         this.socket = socket;
         this.auth = auth;
         this.matchmaker = matchmaker;
+        this.config = config;
         this.out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
         this.in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
     }
@@ -56,6 +62,7 @@ public class ClientHandler implements Runnable {
             case "login":    handleAuth(msg, true);  break;
             case "play_human": handlePlayHuman(); break;
             case "play_ai":    handlePlayAI(msg); break;
+            case "play_gemini": handlePlayGemini(); break;
             case "cancel_wait": handleCancelWait(); break;
             case "get_moves": handleGetMoves(msg); break;
             case "move":   handleMove(msg); break;
@@ -104,7 +111,21 @@ public class ClientHandler implements Runnable {
         if (!loggedIn()) return;
         Object lvlObj = msg.get("level");
         int level = (lvlObj instanceof Integer) ? (Integer) lvlObj : 1;
-        Game g = new Game(this, null, new ChessAI(level));
+        MoveProvider provider = new ChessAI(level);
+        Game g = new Game(this, null, provider);
+        this.game = g;
+        g.start();
+    }
+
+    private void handlePlayGemini() {
+        if (!loggedIn()) return;
+        String apiKey = GeminiApiKey.resolve();
+        if (apiKey == null || apiKey.isEmpty()) {
+            sendError("Gemini is not configured on the server");
+            return;
+        }
+        MoveProvider provider = new GeminiMoveProvider(config, apiKey, this::sendInfo);
+        Game g = new Game(this, null, provider);
         this.game = g;
         g.start();
     }

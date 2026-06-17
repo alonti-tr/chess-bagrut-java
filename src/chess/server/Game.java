@@ -1,9 +1,9 @@
 package chess.server;
 
 import chess.Board;
-import chess.ChessAI;
 import chess.Color;
 import chess.JSONUtil;
+import chess.MoveProvider;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,19 +12,20 @@ public class Game {
     private final Board board = new Board();
     private final ClientHandler white;
     private final ClientHandler black;
-    private final ChessAI ai;
+    private final MoveProvider ai;
 
     private int[] pendingMove = null;
     private ClientHandler pendingPlayer = null;
 
-    public Game(ClientHandler white, ClientHandler black, ChessAI ai) {
+    public Game(ClientHandler white, ClientHandler black, MoveProvider ai) {
         this.white = white;
         this.black = black;
         this.ai = ai;
     }
 
     public void start() {
-        sendStart(white, Color.WHITE, black == null ? "AI" : black.getUsername());
+        String opponentName = black == null ? ai.displayName() : black.getUsername();
+        sendStart(white, Color.WHITE, opponentName);
         if (black != null) sendStart(black, Color.BLACK, white.getUsername());
         broadcastState();
     }
@@ -71,9 +72,17 @@ public class Game {
         if (ai != null && board.turn == Color.BLACK) {
             int[] move = ai.pickMove(board);
             if (move != null) {
-                board.applyMove(move[0], move[1], move[2], move[3]);
+                applyAiMove(move);
                 broadcastState();
             }
+        }
+    }
+
+    private void applyAiMove(int[] move) {
+        if (board.isPromotionMove(move[0], move[1], move[2], move[3])) {
+            board.applyMove(move[0], move[1], move[2], move[3], "Q");
+        } else {
+            board.applyMove(move[0], move[1], move[2], move[3]);
         }
     }
 

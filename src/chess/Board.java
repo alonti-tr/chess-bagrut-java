@@ -69,12 +69,11 @@ public class Board {
         piece.hasMoved = true;
         lastMove = new int[]{fc, fr, tc, tr};
 
-        // Castling: king moved 2 squares → slide the rook as well
         if (piece instanceof King && Math.abs(tc - fc) == 2) {
-            if (tc == 6) {                      // kingside
+            if (tc == 6) {
                 grid[5][fr] = grid[7][fr];
                 grid[7][fr] = null;
-            } else {                            // queenside (tc == 2)
+            } else {
                 grid[3][fr] = grid[0][fr];
                 grid[0][fr] = null;
             }
@@ -124,7 +123,6 @@ public class Board {
         if (isInCheck(color)) return;
         Color opp = color.opposite();
 
-        // Kingside (short): rook at col 7, king goes to col 6
         Piece kRook = grid[7][kr];
         if (kRook instanceof Rook && !kRook.hasMoved
                 && grid[5][kr] == null && grid[6][kr] == null
@@ -132,7 +130,6 @@ public class Board {
             legal.add(new int[]{6, kr});
         }
 
-        // Queenside (long): rook at col 0, king goes to col 2
         Piece qRook = grid[0][kr];
         if (qRook instanceof Rook && !qRook.hasMoved
                 && grid[1][kr] == null && grid[2][kr] == null && grid[3][kr] == null

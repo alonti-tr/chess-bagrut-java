@@ -1,0 +1,32 @@
+# Chess Bagrut — Spec-Kit Agent Rules
+
+<!-- SPECKIT START -->
+
+## Active Feature
+
+**Branch**: `001-tls-gemini`  
+**Plan**: [specs/001-tls-gemini/plan.md](../../specs/001-tls-gemini/plan.md)  
+**Spec**: [specs/001-tls-gemini/spec.md](../../specs/001-tls-gemini/spec.md)
+
+### Key artifacts
+
+- Research: `specs/001-tls-gemini/research.md`
+- Data model: `specs/001-tls-gemini/data-model.md`
+- Contracts: `specs/001-tls-gemini/contracts/`
+- Quickstart: `specs/001-tls-gemini/quickstart.md`
+- Constitution: `.specify/memory/constitution.md`
+
+### Implementation focus
+
+1. TLS via JDK `SSLServerSocket` / `SSLSocket` + JKS keystores
+2. `MoveProvider` interface; `GeminiMoveProvider` with server-side `GOOGLE_API_KEY`
+3. New lobby button "Play vs Gemini" + `play_gemini` wire message
+4. Keep existing local AI and human matchmaking unchanged
+
+<!-- SPECKIT END -->
+
+## Project conventions
+
+- Java 17, Maven, sources in `src/chess/`
+- JSON line protocol over TCP (port 5555)
+- Server mode: `java chess.Main server` — Client: `java chess.Main client`
