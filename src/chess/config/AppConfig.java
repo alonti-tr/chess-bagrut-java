@@ -50,12 +50,6 @@ public class AppConfig {
         }
     }
 
-    public boolean isTlsEnabled() {
-        String env = System.getenv("CHESS_TLS_ENABLED");
-        if (env != null) return Boolean.parseBoolean(env);
-        return getBoolean("chess.tls.enabled", false);
-    }
-
     public String getKeystorePath() {
         String env = System.getenv("CHESS_KEYSTORE");
         if (env != null && !env.isEmpty()) return env;
@@ -94,10 +88,6 @@ public class AppConfig {
 
     public int getGeminiTimeoutSeconds() {
         return getInt("chess.gemini.timeout.seconds", 10);
-    }
-
-    public boolean isGeminiFallbackEnabled() {
-        return getBoolean("chess.gemini.fallback.enabled", true);
     }
 
     private String envOverride(String key) {

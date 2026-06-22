@@ -23,9 +23,7 @@ public class NetworkClient {
         try {
             String host = config.getServerHost();
             int port = config.getServerPort();
-            socket = config.isTlsEnabled()
-                    ? SslHelper.createClientSocket(host, port, config)
-                    : new Socket(host, port);
+            socket = SslHelper.createClientSocket(host, port, config);
             out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
             Thread reader = new Thread(() -> {

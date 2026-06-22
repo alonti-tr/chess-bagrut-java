@@ -16,9 +16,8 @@ public class ChessServer {
 
     public void start() throws Exception {
         int port = config.getServerPort();
-        boolean tls = config.isTlsEnabled();
-        System.out.println("Chess server started on port " + port + (tls ? " (TLS)" : ""));
-        ServerSocket server = tls ? SslHelper.createServerSocket(port, config) : new ServerSocket(port);
+        System.out.println("Chess server started on port " + port + " (TLS)");
+        ServerSocket server = SslHelper.createServerSocket(port, config);
         try (server) {
             while (true) {
                 Socket socket = server.accept();

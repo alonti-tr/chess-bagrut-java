@@ -25,15 +25,12 @@ public class GeminiCheck {
         long ms = System.currentTimeMillis() - start;
 
         if (move == null) {
-            System.out.println("[FAIL] No move returned (" + ms + " ms)");
+            System.out.println("[FAIL] Could not connect to Gemini (" + ms + " ms)");
             System.exit(1);
         }
         boolean legal = board.isLegalMove(move[0], move[1], move[2], move[3]);
         System.out.println("[OK] Move: " + move[0] + "," + move[1] + " -> " + move[2] + "," + move[3]
                 + " | legal=" + legal + " | " + ms + " ms");
-        if (!legal) {
-            System.out.println("[WARN] Move was not legal - fallback may have been used");
-        }
         System.exit(legal ? 0 : 2);
     }
 }

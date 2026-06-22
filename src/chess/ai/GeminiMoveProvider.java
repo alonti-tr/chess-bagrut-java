@@ -1,7 +1,6 @@
 package chess.ai;
 
 import chess.Board;
-import chess.ChessAI;
 import chess.MoveProvider;
 import chess.config.AppConfig;
 import chess.pieces.Piece;
@@ -29,16 +28,13 @@ public class GeminiMoveProvider implements MoveProvider {
 
     private final String[] models;
     private final int timeoutSeconds;
-    private final boolean fallbackEnabled;
     private final HttpClient httpClient;
-    private final ChessAI fallback = new ChessAI(2);
     private final Consumer<String> infoCallback;
 
     public GeminiMoveProvider(AppConfig config, String apiKey, Consumer<String> infoCallback) {
         this.apiKey = apiKey;
         this.models = buildModelList(config.getGeminiModel());
         this.timeoutSeconds = config.getGeminiTimeoutSeconds();
-        this.fallbackEnabled = config.isGeminiFallbackEnabled();
         this.infoCallback = infoCallback;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5))
@@ -56,12 +52,11 @@ public class GeminiMoveProvider implements MoveProvider {
         if (move != null && board.isLegalMove(move[0], move[1], move[2], move[3])) {
             return move;
         }
-        if (!fallbackEnabled) return null;
         if (infoCallback != null) {
-            infoCallback.accept("Gemini unavailable — local AI played this move");
+            infoCallback.accept("Could not connect to Gemini — check your API key and internet connection");
         }
-        System.err.println("Gemini move failed; using local AI fallback");
-        return fallback.pickMove(board);
+        System.err.println("Gemini move failed; could not connect to Gemini");
+        return null;
     }
 
     private int[] requestGeminiMove(Board board) {

@@ -4,4 +4,3 @@ chess.tls.keystore.password=changeit
 chess.server.port=5555
 chess.gemini.model=gemini-2.5-flash
 chess.gemini.timeout.seconds=10
-chess.gemini.fallback.enabled=true
